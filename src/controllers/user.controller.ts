@@ -1,16 +1,20 @@
-import { Request, Response } from 'express';
+import { Request, Response } from "express";
+import { UserCreateDto, UserLoginDto } from "../schemas/users.schema.js";
+import { UserService } from "../services/user.service.js";
 
 export class UserController {
-  static getAll(req: Request, res: Response) {
-    return res.send("users");
-  }
+  constructor(private readonly userService: UserService) {}
 
-  static create(req: Request, res: Response) {
-    const { name } = req.body;
+  create = async (req: Request<{}, {}, UserCreateDto>, res: Response) => {
+    const user = await this.userService.create(req.body);
 
-    return res.status(201).json({
-      message: 'Usuário criado com sucesso',
-      user: { name }
-    });
-  }
+    return res.status(201).json(user);
+  };
+
+  login = async (req: Request<{}, {}, UserLoginDto>, res: Response) => {
+    const data = await this.userService.login(req.body);
+
+    return res.status(200).json(data);
+  };
+  
 }
